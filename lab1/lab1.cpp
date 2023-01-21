@@ -18,6 +18,10 @@ int main(int argc, const char *argv[])
     string result = "";
 
     cout << "1. Getting All PIDs and names" << endl;
+    for (int pid: pids)
+        cout << pid + " " ;
+    
+    cout << endl;
     if (err == Err_OK)
     {
         for (auto pid : pids)
