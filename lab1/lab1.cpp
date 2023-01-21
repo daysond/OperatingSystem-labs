@@ -41,7 +41,6 @@ int main(int argc, const char *argv[])
     cout << ((err == Err_OK) ? "Lab 1 PID: " + pid : GetErrorMsg(err)) << endl;
 
     cout << "\n4. Getting PID of Lab11" << endl;
-    int pid;
     err = GetPidByName("Lab11", pid);
     cout << ((err == Err_OK) ? "Lab 11 PID: " + pid : GetErrorMsg(err)) << endl;
 
