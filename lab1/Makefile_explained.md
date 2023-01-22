@@ -1,6 +1,40 @@
 
 # Lab 1 - Part 2: Makefile explained
 
+## Student Name and ID:
+
+ - Name: Yiyuan Dong 
+ - Student ID: 065-182-131
+ - Date: 2023/01/22
+ 
+ <br />
+
+ ## Source Code:
+
+ ```c
+CC=g++
+CFLAGS=-I
+CFLAGS+=-Wall
+CFLAGS+=-c
+AR=ar
+pidUtil: pidUtil.cpp
+    $(CC) $(CFLAGS) pidUtil.cpp -o pidUtil.o
+
+lib: pidUtil.o
+    $(AR) rcs libPidUtil.a pidUtil.o
+
+clean:
+    rm -f *.o *.a
+
+install:
+    cp libPidUtil.a ../.
+    cp pidUtil.h ../.
+
+all: pidUtil lib
+ ```
+
+# Explanation
+
 ## Define Compiler Variable CC
 
 <br />
