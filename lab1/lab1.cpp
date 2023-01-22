@@ -23,7 +23,8 @@ int main(int argc, const char *argv[])
     if (err == Err_OK)
     {
         cout << setw(7) << left << "pid" << "name" << endl;
-        for (int pid : pids)
+    	cout << setw(40) << setfill('-') << ""<< setfill(' ') <<endl;
+    	for (int pid : pids)
         {
             // string name = "";
             err = GetNameByPid(pid, result);
