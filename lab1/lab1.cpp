@@ -5,6 +5,7 @@
 //  Student ID: 065-182-131
 
 #include <iostream>
+#include <iomanip>
 #include "pidUtil.h"
 #include <vector>
 
@@ -18,16 +19,15 @@ int main(int argc, const char *argv[])
     string result = "";
 
     cout << "1. Getting All PIDs and names" << endl;
-    for (int pid: pids)
-        cout << pid + " " ;
-    
-    cout << endl;
+
     if (err == Err_OK)
     {
-        for (auto pid : pids)
+        cout << setw(7) << left << "pid" << "name" << endl;
+        for (int pid : pids)
         {
+            // string name = "";
             err = GetNameByPid(pid, result);
-            cout << ((err == Err_OK) ? pid + ": " + result : GetErrorMsg(err)) << endl;
+            cout << setw(7) << left << pid << result << endl;
         }
     }
     else
@@ -40,9 +40,9 @@ int main(int argc, const char *argv[])
     cout << ((err == Err_OK) ? "PID 1: " + result : GetErrorMsg(err)) << endl;
 
     cout << "\n3. Getting PID of Lab1" << endl;
-    int pid;
+    int pid = 0;
     err = GetPidByName("Lab1", pid);
-    cout << ((err == Err_OK) ? "Lab 1 PID: " + pid : GetErrorMsg(err)) << endl;
+    cout << ((err == Err_OK) ? "Lab 1 PID "+ to_string(pid) : GetErrorMsg(err)) << endl;
 
     cout << "\n4. Getting PID of Lab11" << endl;
     err = GetPidByName("Lab11", pid);
