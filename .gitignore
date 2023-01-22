@@ -10,3 +10,8 @@
 
 # Built Visual Studio Code Extensions
 *.vsix
+a.out
+*.exe
+*.o
+.DS_Store
+.vscode
