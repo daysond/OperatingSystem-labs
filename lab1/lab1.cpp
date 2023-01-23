@@ -26,7 +26,6 @@ int main(int argc, const char *argv[])
     	cout << setw(40) << setfill('-') << ""<< setfill(' ') <<endl;
     	for (int pid : pids)
         {
-            // string name = "";
             err = GetNameByPid(pid, result);
             cout << setw(7) << left << pid << result << endl;
         }
@@ -47,7 +46,7 @@ int main(int argc, const char *argv[])
 
     cout << "\n4. Getting PID of Lab11" << endl;
     err = GetPidByName("Lab11", pid);
-    cout << ((err == Err_OK) ? "Lab 11 PID: " + pid : GetErrorMsg(err)) << endl;
+    cout << ((err == Err_OK) ? "Lab 11 PID: " + to_string(pid) : GetErrorMsg(err)) << endl;
 
     return 0;
 }
