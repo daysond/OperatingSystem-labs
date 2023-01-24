@@ -71,6 +71,13 @@ int main()
 	        }
             break;
         case 3:
+            ret = ioctl(fd, SIOCGIFNETMASK, &ifr);
+            if(ret<0) {
+                cout << strerror(errno);
+            } else {
+                struct sockaddr_in* netmask = (struct sockaddr_in*)&ifr.ifr_netmask;
+                printf("Network mask: %s\n",inet_ntoa(netmask->sin_addr));
+	        }
             break;
         case 4:
             break;
