@@ -67,7 +67,7 @@ int main()
                 cout << strerror(errno);
             } else {
                 struct sockaddr_in* ipaddr = (struct sockaddr_in*)&ifr.ifr_addr;
-                printf("IP address: %s\n",inet_ntoa(addr->sin_addr));
+                printf("IP address: %s\n",inet_ntoa(ipaddr->sin_addr));
 	        }
             break;
         case 3:
