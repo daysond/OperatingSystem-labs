@@ -80,7 +80,7 @@ int main()
 	        }
             break;
         case 4:
-            ret = ioctl(fd, SIOCGIFNETMASK, &ifr);
+            ret = ioctl(fd, SIOCGIFBRDADDR, &ifr);
             if(ret<0) {
                 cout << strerror(errno);
             } else {
