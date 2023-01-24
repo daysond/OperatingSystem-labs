@@ -85,7 +85,7 @@ int main()
                 cout << strerror(errno);
             } else {
                 struct sockaddr_in* broadaddr = (struct sockaddr_in*)&ifr.ifr_broadaddr;
-                printf("Broadcast address: %s\n",inet_ntoa(broadaddr->sin_addr.s_addr));
+                printf("Broadcast address: %s\n",inet_ntoa(broadaddr->sin_addr));
 	        }
             break;
         }
