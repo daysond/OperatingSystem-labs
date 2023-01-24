@@ -66,7 +66,7 @@ int main()
             if(ret<0) {
                 cout << strerror(errno);
             } else {
-                struct sockaddr_in* addr = (struct sockaddr_in*)&ifr.ifr_addr;
+                struct sockaddr_in* ipaddr = (struct sockaddr_in*)&ifr.ifr_addr;
                 printf("IP address: %s\n",inet_ntoa(addr->sin_addr));
 	        }
             break;
@@ -80,6 +80,13 @@ int main()
 	        }
             break;
         case 4:
+            ret = ioctl(fd, SIOCGIFNETMASK, &ifr);
+            if(ret<0) {
+                cout << strerror(errno);
+            } else {
+                struct sockaddr_in* broadaddr = (struct sockaddr_in*)&ifr.ifr_broadaddr;
+                printf("Broadcast address: %s\n",inet_ntoa(broadaddr->sin_addr));
+	        }
             break;
         }
 	if(selection!=0) {
