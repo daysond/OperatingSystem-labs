@@ -7,6 +7,7 @@
 #include <net/if_arp.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <netinet/in.h>
 
 #define NAME_SIZE 16
 
@@ -58,9 +59,16 @@ int main()
             } else {
                 mac=(unsigned char*)ifr.ifr_hwaddr.sa_data;
                 printf("MAC Address: %02X:%02X:%02X:%02X:%02X:%02X\n", mac[0],mac[1],mac[2],mac[3],mac[4],mac[5]);
-	    }
+	        }
             break;
         case 2:
+            ret = ioctl(fd, SIOCGIFADDR, &ifr);
+            if(ret<0) {
+                cout << strerror(errno);
+            } else {
+                struct sockaddr_in* addr = (struct sockaddr_in*)&ifr.ifr_addr;
+                printf("IP address: %s\n",inet_ntoa(addr->sin_addr));
+	        }
             break;
         case 3:
             break;
