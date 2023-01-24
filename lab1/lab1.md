@@ -13,7 +13,6 @@ nm libPidUtil.a | grep ' T '
 
 ## PART A
 
----
 Your job is to create a **Makefile** and **Lab1.cpp** which links this static library in the build process and uses some of the functions inside. **Lab1.cpp** must:
 
 1. Call **GetAllPids()** and **GetNameByPid()** to print out all pids and their names.
@@ -24,7 +23,6 @@ Your job is to create a **Makefile** and **Lab1.cpp** which links this static li
 
 ## PART B
 
----
 The Makefile to create **libPidUtil.a** is as follows:
 
 ```cpp
