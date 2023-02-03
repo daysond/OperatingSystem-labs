@@ -57,7 +57,7 @@ int systemMonitor()//run by the parent process
     sleep(30);
     //TODO: Send stop signals to the children (SIGUSR2)
    
-    if (isParent])   kill(childPid[i], SIGUSR2);
+    if (isParent)   kill(childPid[i], SIGUSR2);
     
     
     //Wait for children to terminate
