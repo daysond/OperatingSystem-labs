@@ -25,15 +25,15 @@ If the signal handler receives a **SIGUSR1**, the following message should appea
 
 `intfMonitor: starting up`
 
-If the signal handler receives a ctrl-C, the following message should appear on the screen:
+If the signal handler receives a **ctrl-C**, the following message should appear on the screen:
 
 `intfMonitor: ctrl-C discarded`
 
-If the signal handler receives a ctrl-Z, the following message should appear on the screen:
+If the signal handler receives a **ctrl-Z**, the following message should appear on the screen:
 
 `intfMonitor: ctrl-Z discarded`
 
-If the signal handler receives a SIGUSR2, the following message should appear on the screen:
+If the signal handler receives a **SIGUSR2**, the following message should appear on the screen:
 
 `intfMonitor: shutting down`
 
