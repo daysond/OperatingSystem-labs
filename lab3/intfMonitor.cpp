@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 	struct sigaction action;
 	action.sa_handler = signalHandler;
 	sigemptyset(&action.sa_mask);
-	action.sa_flags = 0;
+	action.sa_flags = SA_RESTART;
 
     //TODO: Register signal handlers for SIGUSR1, SIGUSR2, ctrl-C and ctrl-Z
 	sigaction(SIGINT, &action, NULL);	//	ctrl - C 
@@ -116,6 +116,7 @@ static void signalHandler(int signum) {
 //      intfMonitor: shutting down
 	case SIGUSR2:
 		cout << "intfMonitor: shutting down" << endl;
+		isRunning = false;
 		break;
 //      If the signal handler receives any other signal, the following message should appear on the screen:
 //      intfMonitor: undefined signal
