@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     //TODO: Declare a variable of type struct sigaction
     //      For sigaction, see http://man7.org/linux/man-pages/man2/sigaction.2.html
 	struct sigaction action;
-	access.sa_handler = signalHandler;
+	action.sa_handler = signalHandler;
 	sigemptyset(&action.sa_mask);
 	action.sa_flags = 0;
 
