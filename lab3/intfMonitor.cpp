@@ -17,7 +17,7 @@ bool isRunning=false;
 
 //TODO: Declare your signal handler function prototype
 static void signalHandler(int signum);
-bool isRunning;
+bool running;
 
 int main(int argc, char *argv[])
 {
@@ -100,7 +100,7 @@ static void signalHandler(int signum) {
 //      intfMonitor: starting up
 	case SIGUSR1:
 		cout << "intfMonitor: starting up" << endl;
-		isRunning = true
+		isRunning = true;
 		break;
 //      If the signal handler receives a ctrl-C, the following message should appear on the screen:
 //      intfMonitor: ctrl-C discarded
