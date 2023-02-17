@@ -14,22 +14,22 @@ using namespace std;
 char socket_path[] = "/tmp/tmp1";
 
 int main(int argc, char *argv[]) {
-    // struct sockaddr_un addr;
-    // char buf[100];
-    // int fd,rc;
-    // bool isRunning = true;
+    struct sockaddr_un addr;
+    char buf[100];
+    int fd,rc;
+    bool isRunning = true;
 
-    // memset(&addr, 0, sizeof(addr));
-    // Create the socket
-    // if ( (fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-    // cout << "client1: " << strerror(errno) << endl;
-    // exit(-1);
-    // }
+    memset(&addr, 0, sizeof(addr));
+    //Create the socket
+    if ( (fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+    cout << "client1: " << strerror(errno) << endl;
+    exit(-1);
+    }
 
-    // addr.sun_family = AF_UNIX;
-    // Set the socket path to a local socket file
-    // strncpy(addr.sun_path, socket_path, sizeof(addr.sun_path)-1);
-    // cout << "client1: addr.sun_path: " << addr.sun_path << endl;
+    addr.sun_family = AF_UNIX;
+    //Set the socket path to a local socket file
+    strncpy(addr.sun_path, socket_path, sizeof(addr.sun_path)-1);
+    cout << "client1: addr.sun_path: " << addr.sun_path << endl;
 
     cout << "client1: connect()" << endl;
     // Connect to the local socket

@@ -17,14 +17,21 @@ char socket_path[] = "/tmp/lab4";
 int main(int argc, char const *argv[])
 {
     int sock, client, bytesRecv;
-    char buf[1024];
+    char buf[256];
     bool isRunning = true;
     struct sockaddr_un addr;
+
+    //  Create the socket
+    sock = socket(AF_UNIX, SOCK_STREAM, 0);
+    if (sock < 0) {
+        cerr << "server: " << strerror(errno) << endl;
+        exit(-1);
+    }
+
     memset(&addr, 0, sizeof(addr));
-    //  set family
     addr.sun_family = AF_UNIX;
-    //  set socket path to the addr info
     strncpy(addr.sun_path, socket_path, sizeof(addr.sun_path)-1);
+
     //  unlink in case socket already exists
     unlink(socket_path);
 
@@ -32,12 +39,6 @@ int main(int argc, char const *argv[])
     cout << "server: addr.sun_path:" << addr.sun_path << endl;
     #endif
     
-    //  Create the socket
-    sock = socket(AF_UNIX, SOCK_STREAM, 0);
-    if (sock < 0) {
-        cerr << "server: " << strerror(errno) << endl;
-        exit(-1);
-    }
     //  Bind the socket to IP / port
     #if defined(DEBUG)
     cout << "server: bind()" << endl;
@@ -61,62 +62,51 @@ int main(int argc, char const *argv[])
     //  Accept a call
     while (isRunning)
     {
-        #if defined(DEBUG)
-        cout << "server: accept()" << endl;
-        #endif
+
         if ( (client = accept(sock, NULL, NULL)) == -1) {
             cout << "server: " << strerror(errno) << endl;
             unlink(socket_path);
-            //  Close the listening socket
             close(sock);
             exit(-1);
         }
-
-        //The server will send the command "Pid" to the client to request the client's pid.
-        if (write(client, "Pid", 3) != 3) {
-            if (bytesRecv > 0)
-                fprintf(stderr, "partial write");
-            else {
-                cout << "client1: " << strerror(errno) << endl;
-                close(sock);
-                exit(-1);
-            }
-        }
-        
-
         #if defined(DEBUG)
-        cout << "server: read()" << endl;
+        cout << "server: accept() client: " << client << endl;
         #endif
-        //  while receiving message, display / response
-        while (bytesRecv == read(client, buf, sizeof(buf)) > 0) {
-            cout << "read " << bytesRecv << " bytes: " << buf << endl;
-            if(strncmp("quit", buf, 4)==0) {
-	            isRunning = false;
-            }
 
-            if(bytesRecv < 0) {
-                cout << "server: " << strerror(errno) << endl;
-                unlink(socket_path);
-                close(sock);
-                close(client);
-                exit(-1);
-            }
-            if (bytesRecv == 0) {
-                //  end of file
-                unlink(socket_path);
-                close(sock);
-                close(client);
-            }
-        }  
+        // send pid request
+        bytesRecv = write(client, "pid", 3);
+        if(bytesRecv < 0) {
+            cout << "client1: " << strerror(errno) << endl;
+            unlink(socket_path);
+            close(sock);
+            exit(-1);
+        } 
+        cout << "The server requests the client's pid" << endl;
+        // reading pid
+        memset(&buf, 0, sizeof(buf));
+        bytesRecv = read(client, buf, 255);
+        cout << "Server: "<< buf << endl;
+
+        // seding Sleep
+        cout << "The server requests the client to sleep" << endl;
+        memset(&buf, 0, sizeof(buf));
+        bytesRecv = write(client, "Sleep", 5);
+
+        // reading Done
+        memset(&buf, 0, sizeof(buf));
+        bytesRecv = read(client, buf, 255);
+
+        // sending Quit
+        cout << "The server requests the client to quit" << endl;
+        memset(&buf, 0, sizeof(buf));
+        bytesRecv = write(client, "Quit", 5);
+        isRunning = false;
+
     }
-//  Close socket
-    cout << "server: close(fd), close(cl)" << endl;
+
+    cout << "server: closing sockets..." << endl;
     unlink(socket_path);
     close(sock);
     close(client);
     return 0;
-
-    
-    
-    
 }
