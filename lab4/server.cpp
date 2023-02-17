@@ -11,7 +11,7 @@
 #include <stdlib.h>
 
 using namespace std;
-
+#define DEBUG
 //  Define sokcet path
 char socket_path[] = "/tmp/lab4";
 int main(int argc, char const *argv[])

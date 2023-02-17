@@ -10,7 +10,7 @@
 #include <unistd.h>
 
 using namespace std;
-
+#define DEBUG
 char socket_path[] = "/tmp/lab4";
 
 int main(int argc, char const *argv[])
