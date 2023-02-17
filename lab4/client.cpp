@@ -44,7 +44,7 @@ int main(int argc, char const *argv[])
     #endif
 
     if (connect(sock, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
-        cerr << "client: " << strerror(errno) << endl;
+        cerr << "client connect() failed.: " << strerror(errno) << endl;
         close(sock);
         exit(-1);
     }
