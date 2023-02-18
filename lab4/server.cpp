@@ -14,9 +14,10 @@ using namespace std;
 #define DEBUG
 //  Define sokcet path
 char socket_path[] = "/tmp/lab4";
-int main(int argc, char const *argv[])
-{
-    int sock, client, bytesRecv;
+
+int main(int argc, char const *argv[]) {
+
+    int sock, client, bytes, size;
     char buf[256];
     bool isRunning = true;
     struct sockaddr_un addr;
@@ -60,8 +61,7 @@ int main(int argc, char const *argv[])
         exit(-1);
     }
     //  Accept a call
-    while (isRunning)
-    {
+    while (isRunning) {
 
         if ( (client = accept(sock, NULL, NULL)) == -1) {
             cout << "server: " << strerror(errno) << endl;
@@ -74,9 +74,9 @@ int main(int argc, char const *argv[])
         #endif
 
         // send pid request
-        bytesRecv = write(client, "pid", 3);
-        if(bytesRecv < 0) {
-            cout << "client1: " << strerror(errno) << endl;
+        bytes = write(client, "pid", 3);
+        if(bytes < 0) {
+            cout << "Server: " << strerror(errno) << endl;
             unlink(socket_path);
             close(sock);
             exit(-1);
@@ -84,22 +84,48 @@ int main(int argc, char const *argv[])
         cout << "The server requests the client's pid" << endl;
         // reading pid
         memset(&buf, 0, sizeof(buf));
-        bytesRecv = read(client, buf, 255);
+        bytes = read(client, buf, 255);
+        if (bytes < 0) {
+            perror("ERROR reading from socket");
+            exit(1);
+        }
         cout << "Server: "<< buf << endl;
 
         // seding Sleep
         cout << "The server requests the client to sleep" << endl;
         memset(&buf, 0, sizeof(buf));
-        bytesRecv = write(client, "Sleep", 5);
-
+        size = 5;
+        bytes = write(client, "Sleep", size);
+        if (bytes != size) {
+            if (bytes > 0)
+                fprintf(stderr, "partial write");
+            else {
+                cout << "client: " << strerror(errno) << endl;
+                close(sock);
+                exit(-1);
+            }
+        }
         // reading Done
         memset(&buf, 0, sizeof(buf));
-        bytesRecv = read(client, buf, 255);
+        bytes = read(client, buf, 255);
+        if (bytes < 0) {
+            perror("ERROR reading from socket");
+            exit(1);
+        }
 
         // sending Quit
         cout << "The server requests the client to quit" << endl;
         memset(&buf, 0, sizeof(buf));
-        bytesRecv = write(client, "Quit", 5);
+        bytes = write(client, "Quit", size);
+        if (bytes != size) {
+            if (bytes > 0)
+                fprintf(stderr, "partial write");
+            else {
+                cout << "client: " << strerror(errno) << endl;
+                close(sock);
+                exit(-1);
+            }
+        }
         isRunning = false;
 
     }
@@ -110,3 +136,4 @@ int main(int argc, char const *argv[])
     close(client);
     return 0;
 }
+
