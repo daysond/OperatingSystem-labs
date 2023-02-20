@@ -14,6 +14,9 @@ client2: $(FILES1)
 client3: $(FILES1)
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
+client4: $(FILES1)
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
+
 server: $(FILES2)
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
