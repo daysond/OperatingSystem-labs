@@ -128,7 +128,7 @@ int main(int argc, char const *argv[]) {
 #endif
     // Clean up
     for (int i = 0; i < NUMCLIENT; i++) {
-        if (clients[i] == 0) continue;
+        if (clients[i] <= 0) continue;
         ret = write(clients[i], "Quit", 4);
         if (ret == -1) {
             cout <<"Client:" << strerror(errno) << endl;
