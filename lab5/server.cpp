@@ -5,6 +5,7 @@
 
 #include <arpa/inet.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <iostream>
 #include <net/if.h>
 #include <netinet/in.h>
@@ -15,7 +16,6 @@
 #include <sys/types.h>
 #include <sys/un.h>
 #include <unistd.h>
-#include <fcntl.h>
 
 // #define DEBUG
 
@@ -30,7 +30,7 @@ queue<string> messageQueue;
 pthread_mutex_t lock_x;
 
 int setupAddr(struct sockaddr_in &addr, int &sock, const char *port);
-int setupSocket(int&);
+int setupSocket(int &);
 void check(int, int &);
 void *recv_func(void *arg);
 void setupActionHandler();
@@ -43,8 +43,9 @@ int main(int argc, char const *argv[]) {
         cout << "usage: client <port number>" << endl;
         return -1;
     }
+
 #if defined(DEBUG)
-    cout << "[" << getpid() <<"] Server running..."  << endl;   
+    cout << "[" << getpid() << "] Server running..." << endl;
 #endif
 
     int ret;
@@ -57,28 +58,29 @@ int main(int argc, char const *argv[]) {
 
     memset(&clients, 0, sizeof(clients));
 
-    // sigaction 
+    // Signal Handling
     setupActionHandler();
 
-    //  create a socket
+    //  Create a socket
     int master_socket = socket(AF_INET, SOCK_STREAM, 0);
     // check(setupSocket(master_socket), master_socket);
 
     //  setup addr (hint)
     check(setupAddr(addr, master_socket, argv[1]), master_socket);
 
-    //  bind socket to addr
+    //  Bind socket to addr
     check(bind(master_socket, (struct sockaddr *)&addr, sizeof(addr)),
           master_socket);
 
-    //  mark the socket for listening in
+    //  Mark the socket for listening in
     check(listen(master_socket, 5), master_socket);
 
     pthread_mutex_init(&lock_x, NULL);
 
+    //  Accepting connections
     while (isRunning) {
 #if defined(DEBUG)
-            cout << "[Server] Waiting for connection... " << endl;
+        cout << "[Server] Waiting for connection... " << endl;
 #endif
         if (connections < 3) {
             socklen_t cl_size = sizeof(cl_addrs[connections]);
@@ -92,9 +94,9 @@ int main(int argc, char const *argv[]) {
 #endif
 
 #if defined(DEBUG)
-            cout << "[Recv] Creating thread for client fd " << clients[connections] << endl;
+            cout << "[Recv] Creating thread for client fd "
+                 << clients[connections] << endl;
 #endif
-
             check(pthread_create(&threads[connections], NULL, recv_func,
                                  &clients[connections]),
                   master_socket);
@@ -111,24 +113,24 @@ int main(int argc, char const *argv[]) {
     }
 
 #if defined(DEBUG)
-            cout << "[Server] Shutting down clients and closing sockets..." << endl;
+    cout << "[Server] Shutting down clients and closing sockets..." << endl;
 #endif
 
-    //  joining threads
-    for(int i=0; i<NUMCLIENT; i++) 
+    //  Join threads
+    for (int i = 0; i < NUMCLIENT; i++)
         pthread_join(threads[i], NULL);
 
-    // close sockets 
-    for(int i=0; i<NUMCLIENT; i++) {
+    // Clean up
+    for (int i = 0; i < NUMCLIENT; i++) {
         ret = write(clients[i], "Quit", 4);
-        if(ret == -1){
+        if (ret == -1) {
             cout << strerror(errno) << endl;
         } else if (ret < 4) {
             cout << "ERROR: Buffer partially write." << endl;
         }
         close(clients[i]);
     }
-     close(master_socket); 
+    close(master_socket);
 
 #if defined(DEBUG)
     cout << "[Server]: Process has shutdown sucessfully." << endl;
@@ -137,7 +139,7 @@ int main(int argc, char const *argv[]) {
     return 0;
 }
 
-int setupSocket(int& sock) {
+int setupSocket(int &sock) {
 
     int flags = fcntl(sock, F_GETFL, 0);
     fcntl(sock, F_SETFL, flags | O_NONBLOCK);
@@ -145,7 +147,6 @@ int setupSocket(int& sock) {
     tv.tv_sec = 5;
     tv.tv_usec = 0;
     return setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
-
 }
 
 int setupAddr(struct sockaddr_in &addr, int &sock, const char *port) {
@@ -167,13 +168,13 @@ void setupActionHandler() {
 }
 
 void check(int ret, int &sock) {
-    
-//     if (errno == EAGAIN || errno == EWOULDBLOCK) {
-// #if defined(DEBUG)
-//     cout << "[Accept]: Timeout occured." << endl;
-// #endif
-//         return;
-//     }
+
+    //     if (errno == EAGAIN || errno == EWOULDBLOCK) {
+    // #if defined(DEBUG)
+    //     cout << "[Accept]: Timeout occured." << endl;
+    // #endif
+    //         return;
+    //     }
 
     if (ret < 0) {
         cout << "[ERROR] (" << __FILE__ << ": " << __LINE__
@@ -190,7 +191,7 @@ void *recv_func(void *arg) {
 #if defined(DEBUG)
     cout << "[Recv] Rready reading data from client " << client_fd << endl;
 #endif
-    // setting read timeout
+    // Setting read timeout
     struct timeval tv;
     tv.tv_sec = 5;
     tv.tv_usec = 0;
@@ -216,17 +217,14 @@ void *recv_func(void *arg) {
 
 static void signalHandler(int signum) {
 
-    switch (signum)
-    {
+    switch (signum) {
     case SIGINT:
-        /* code */
         cout << "[Interrupt] SIGINT received." << endl;
         isRunning = false;
         break;
-    
+
     default:
         cout << "Handler not defined." << endl;
         break;
     }
-
 }
