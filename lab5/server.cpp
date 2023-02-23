@@ -124,21 +124,21 @@ int main(int argc, char const *argv[]) {
         pthread_join(threads[i], NULL);
 
 #if defined(DEBUG)
-    cout << "[Thread] Threads exited." << endl;
+    cout << "[Thread] Threads joined." << endl;
 #endif
     // Clean up
     for (int i = 0; i < NUMCLIENT; i++) {
         if (clients[i] <= 0) continue;
         ret = write(clients[i], "Quit", 4);
         if (ret == -1) {
-            cout <<"Client:" << strerror(errno) << endl;
+            cout << strerror(errno) << endl;
         } else if (ret < 4) {
             cout << "ERROR: Buffer partially write." << endl;
         }
         close(clients[i]);
     }
 #if defined(DEBUG)
-    cout << "[Server] Clients shut down." << endl;
+    cout << "[Server] Clients shut down sucessfully." << endl;
 #endif
     close(master_socket);
 
