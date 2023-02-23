@@ -71,7 +71,6 @@ int main(int argc, char const *argv[]) {
 
     //  Accepting connections
     while (isRunning) {
-
         if (connections < 3) {
 #if defined(DEBUG)
         cout << "[Server] Waiting for connection... " << endl;
@@ -201,7 +200,6 @@ void check(int ret, int &sock) {
         close(sock);
         exit(ret);
     }
-     cout << "Done checking." << endl;
 }
 
 //  Receive function
