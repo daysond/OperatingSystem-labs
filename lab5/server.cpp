@@ -122,6 +122,9 @@ int main(int argc, char const *argv[]) {
     for (int i = 0; i < NUMCLIENT; i++)
         pthread_join(threads[i], NULL);
 
+#if defined(DEBUG)
+    cout << "[Thread] Threads exited." << endl;
+#endif
     // Clean up
     for (int i = 0; i < NUMCLIENT; i++) {
         ret = write(clients[i], "Quit", 4);
@@ -132,6 +135,9 @@ int main(int argc, char const *argv[]) {
         }
         close(clients[i]);
     }
+#if defined(DEBUG)
+    cout << "[Server] Clients shut down." << endl;
+#endif
     close(master_socket);
 
 #if defined(DEBUG)
