@@ -17,7 +17,7 @@
 #include <sys/un.h>
 #include <unistd.h>
 
-// #define DEBUG
+#define DEBUG
 
 using namespace std;
 
@@ -63,7 +63,9 @@ int main(int argc, char const *argv[]) {
 
     //  Create a socket
     int master_socket = socket(AF_INET, SOCK_STREAM, 0);
-    // check(setupSocket(master_socket), master_socket);
+    // *accept non-blocking code
+    check(setupSocket(master_socket), master_socket);
+    // --------------------------
 
     //  setup addr (hint)
     check(setupAddr(addr, master_socket, argv[1]), master_socket);
@@ -97,10 +99,12 @@ int main(int argc, char const *argv[]) {
             cout << "[Recv] Creating thread for client fd "
                  << clients[connections] << endl;
 #endif
-            check(pthread_create(&threads[connections], NULL, recv_func,
-                                 &clients[connections]),
-                  master_socket);
-            connections += 1;
+            if (clients[connections] > 0) {
+                check(pthread_create(&threads[connections], NULL, recv_func,
+                                     &clients[connections]),
+                      master_socket);
+                connections += 1;
+            }
         }
 
         if (messageQueue.empty() == 0) {
@@ -141,8 +145,8 @@ int main(int argc, char const *argv[]) {
 
 int setupSocket(int &sock) {
 
-    int flags = fcntl(sock, F_GETFL, 0);
-    fcntl(sock, F_SETFL, flags | O_NONBLOCK);
+    // int flags = fcntl(sock, F_GETFL, 0);
+    // fcntl(sock, F_SETFL, flags | O_NONBLOCK);
     struct timeval tv;
     tv.tv_sec = 5;
     tv.tv_usec = 0;
@@ -169,13 +173,14 @@ void setupActionHandler() {
 
 void check(int ret, int &sock) {
 
-    //     if (errno == EAGAIN || errno == EWOULDBLOCK) {
-    // #if defined(DEBUG)
-    //     cout << "[Accept]: Timeout occured." << endl;
-    // #endif
-    //         return;
-    //     }
-
+    // *accept non-blocking code
+    if (errno == EAGAIN || errno == EWOULDBLOCK) {
+#if defined(DEBUG)
+        cout << "[Accept]: Timeout occured." << endl;
+#endif
+        return;
+    }
+    // ------------------------
     if (ret < 0) {
         cout << "[ERROR] (" << __FILE__ << ": " << __LINE__
              << ". Error: " << strerror(errno) << endl;
