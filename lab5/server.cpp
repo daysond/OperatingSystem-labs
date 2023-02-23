@@ -55,7 +55,7 @@ int main(int argc, char const *argv[]) {
     sockaddr_in cl_addrs[NUMCLIENT];
     struct sockaddr_in addr;
     pthread_t threads[NUMCLIENT];
-    
+
     memset(&threads, 0, sizeof(threads));
     memset(&clients, 0, sizeof(clients));
 
@@ -128,14 +128,15 @@ int main(int argc, char const *argv[]) {
 #endif
     // Clean up
     for (int i = 0; i < NUMCLIENT; i++) {
-        if (clients[i] == 0) continue;
-        ret = write(clients[i], "Quit", 4);
-        if (ret == -1) {
-            cout << strerror(errno) << endl;
-        } else if (ret < 4) {
-            cout << "ERROR: Buffer partially write." << endl;
+        if (clients[i] != 0) {
+            ret = write(clients[i], "Quit", 4);
+            if (ret == -1) {
+                cout << strerror(errno) << endl;
+            } else if (ret < 4) {
+                cout << "ERROR: Buffer partially write." << endl;
+            }
+            close(clients[i]);
         }
-        close(clients[i]);
     }
 #if defined(DEBUG)
     cout << "[Server] Clients shut down." << endl;
@@ -189,7 +190,7 @@ void check(int ret, int &sock) {
         close(sock);
         exit(ret);
     }
-     cout << "Done checking." << endl;
+    cout << "Done checking." << endl;
 }
 
 void *recv_func(void *arg) {
