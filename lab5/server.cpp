@@ -55,7 +55,8 @@ int main(int argc, char const *argv[]) {
     sockaddr_in cl_addrs[NUMCLIENT];
     struct sockaddr_in addr;
     pthread_t threads[NUMCLIENT];
-
+    
+    memset(&threads, 0, sizeof(threads));
     memset(&clients, 0, sizeof(clients));
 
     // Signal Handling
