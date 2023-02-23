@@ -95,11 +95,11 @@ int main(int argc, char const *argv[]) {
             cout << "[Accept] Client fd: " << clients[connections] << endl;
 #endif
 
-#if defined(DEBUG)
-            cout << "[Recv] Creating thread for client fd "
-                 << clients[connections] << endl;
-#endif
             if (clients[connections] > 0) {
+#if defined(DEBUG)
+                cout << "[Recv] Creating thread for client fd "
+                     << clients[connections] << endl;
+#endif
                 check(pthread_create(&threads[connections], NULL, recv_func,
                                      &clients[connections]),
                       master_socket);
@@ -144,9 +144,6 @@ int main(int argc, char const *argv[]) {
 }
 
 int setupSocket(int &sock) {
-
-    // int flags = fcntl(sock, F_GETFL, 0);
-    // fcntl(sock, F_SETFL, flags | O_NONBLOCK);
     struct timeval tv;
     tv.tv_sec = 5;
     tv.tv_usec = 0;
