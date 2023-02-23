@@ -169,7 +169,7 @@ void setupActionHandler() {
 void check(int ret, int &sock) {
 
     // *accept non-blocking code
-    if (errno == EAGAIN || errno == EWOULDBLOCK) {
+    if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR) {
 #if defined(DEBUG)
         cout << "[Accept] Timeout occured." << endl;
 #endif
@@ -177,7 +177,7 @@ void check(int ret, int &sock) {
     }
     // ------------------------
     else if (ret < 0) {
-        cout << "[ERROR]" << strerror(errno) << endl;
+        cout << "[ERROR] " << strerror(errno) << endl;
         close(sock);
         exit(ret);
     }
