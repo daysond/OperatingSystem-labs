@@ -38,7 +38,7 @@ static void signalHandler(int signum);
 
 int main(int argc, char const *argv[]) {
 
-    //  no port number provided, return -1
+    //  No port number provided, return -1
     if (argc < 2) {
         cout << "usage: client <port number>" << endl;
         return -1;
@@ -59,26 +59,15 @@ int main(int argc, char const *argv[]) {
     memset(&threads, 0, sizeof(threads));
     memset(&clients, 0, sizeof(clients));
 
-    // Signal Handling
-    setupActionHandler();
+    int master_socket = socket(AF_INET, SOCK_STREAM, 0);    //  Create a socket
+    pthread_mutex_init(&lock_x, NULL);      //  Init mutex
 
-    //  Create a socket
-    int master_socket = socket(AF_INET, SOCK_STREAM, 0);
-    // *accept non-blocking code
-    check(setupSocket(master_socket), master_socket);
-    // --------------------------
-
-    //  setup addr (hint)
-    check(setupAddr(addr, master_socket, argv[1]), master_socket);
-
-    //  Bind socket to addr
+    setupActionHandler();   // Signal Handling
+    check(setupSocket(master_socket), master_socket);   // *accept non-blocking 
+    check(setupAddr(addr, master_socket, argv[1]), master_socket);  //  setup addr (hint)
     check(bind(master_socket, (struct sockaddr *)&addr, sizeof(addr)),
-          master_socket);
-
-    //  Mark the socket for listening in
-    check(listen(master_socket, 5), master_socket);
-
-    pthread_mutex_init(&lock_x, NULL);
+          master_socket);   //  Bind socket to addr
+    check(listen(master_socket, 5), master_socket);     //  Mark the socket for listening in
 
     //  Accepting connections
     while (isRunning) {
@@ -106,6 +95,7 @@ int main(int argc, char const *argv[]) {
             }
         }
 
+        // Printing out messages
         if (messageQueue.empty() == 0) {
             pthread_mutex_lock(&lock_x);
             cout << messageQueue.front() << endl;
@@ -124,22 +114,24 @@ int main(int argc, char const *argv[]) {
         pthread_join(threads[i], NULL);
 
 #if defined(DEBUG)
-    cout << "[Thread] Threads joined." << endl;
+    cout << "[Thread] All threads joined." << endl;
 #endif
-    // Clean up
+    // Closing client sockets
     for (int i = 0; i < NUMCLIENT; i++) {
         if (clients[i] <= 0) continue;
         ret = write(clients[i], "Quit", 4);
         if (ret == -1) {
             cout << strerror(errno) << endl;
         } else if (ret < 4) {
-            cout << "ERROR: Buffer partially write." << endl;
+            cout << "ERROR: Buffer \"Quit\" partially written." << endl;
         }
         close(clients[i]);
     }
+
 #if defined(DEBUG)
-    cout << "[Server] Clients shut down sucessfully." << endl;
+    cout << "[Server] All clients shut down." << endl;
 #endif
+
     close(master_socket);
 
 #if defined(DEBUG)
@@ -149,6 +141,7 @@ int main(int argc, char const *argv[]) {
     return 0;
 }
 
+//  Set accept() non-blocking
 int setupSocket(int &sock) {
     struct timeval tv;
     tv.tv_sec = 5;
@@ -156,6 +149,7 @@ int setupSocket(int &sock) {
     return setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
 }
 
+//  Setup hint
 int setupAddr(struct sockaddr_in &addr, int &sock, const char *port) {
     memset((char *)&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
@@ -166,6 +160,7 @@ int setupAddr(struct sockaddr_in &addr, int &sock, const char *port) {
                          //  string to a number, 0.0.0.0 to get any address
 }
 
+//  Setup software interrupt handler
 void setupActionHandler() {
     struct sigaction action;
     action.sa_handler = signalHandler;
@@ -174,6 +169,22 @@ void setupActionHandler() {
     sigaction(SIGINT, &action, NULL);
 }
 
+// Interrupt handler
+static void signalHandler(int signum) {
+
+    switch (signum) {
+    case SIGINT:
+        cout << "\n[Interrupt] SIGINT received." << endl;
+        isRunning = false;
+        break;
+
+    default:
+        cout << "Handler not defined." << endl;
+        break;
+    }
+}
+
+//  Error checking 
 void check(int ret, int &sock) {
 
     // *accept non-blocking code
@@ -192,6 +203,7 @@ void check(int ret, int &sock) {
      cout << "Done checking." << endl;
 }
 
+//  Receive function
 void *recv_func(void *arg) {
     int client_fd = *(int *)arg;
     char buf[BUF_LEN];
@@ -223,16 +235,3 @@ void *recv_func(void *arg) {
     pthread_exit(NULL);
 }
 
-static void signalHandler(int signum) {
-
-    switch (signum) {
-    case SIGINT:
-        cout << "\n[Interrupt] SIGINT received." << endl;
-        isRunning = false;
-        break;
-
-    default:
-        cout << "Handler not defined." << endl;
-        break;
-    }
-}
