@@ -3,6 +3,7 @@
 //  Created by:  Yiyuan Dong    2023-02-18
 //
 
+#include <errno.h>
 #include <arpa/inet.h>
 #include <fcntl.h> //  for nonblocking
 #include <iostream>
@@ -84,9 +85,9 @@ int main(int argc, char const *argv[]) {
             socklen_t cl_size = sizeof(cl_addrs[connections]);
             ret = clients[connections] = accept(
                 master_socket, (sockaddr *)&cl_addrs[connections], &cl_size);
-            #if defined(DEBUG)
+#if defined(DEBUG)
             cout << "accept()ed client " << clients[connections] << endl;
-            #endif
+#endif
             if (ret == -1) {
                 errExit("Server: cannot accept client", master_socket);
             } else {
@@ -102,18 +103,11 @@ int main(int argc, char const *argv[]) {
                     errExit("Cannot create receive thread", master_socket);
                 connections += 1;
             }
-
-            // main print message then pop
-            // Print out to the screen anything in the message queue. Be sure to
-            // mutex this message queue since it is used in the receive thread
-            // as well.
-
-            // Sleep for one second.
         }
 
         if (messageQueue.empty() == 0) {
             pthread_mutex_lock(&lock_x);
-            cout << "######" << messageQueue.front() << endl;
+            cout << messageQueue.front() << endl;
             messageQueue.pop();
             pthread_mutex_unlock(&lock_x);
         }
@@ -152,7 +146,7 @@ void *recv_func(void *arg) {
 #if defined(DEBUG)
     cout << "read() client: " << client_fd << endl;
 #endif
-    
+
     struct timeval tv;
     tv.tv_sec = 5;
     tv.tv_usec = 0;
@@ -160,13 +154,13 @@ void *recv_func(void *arg) {
                sizeof(tv));
 
     while (isRunning) {
+        cout << "trying to read... from " << client_fd << endl;
         if (read(client_fd, buf, BUF_LEN) > 0) {
             pthread_mutex_lock(&lock_x);
             messageQueue.push(buf);
-            // messageQueue.push(to_string(client_fd));
             pthread_mutex_unlock(&lock_x);
         } else {
-            cout << "err handling..." << endl;
+            cout << strerror(errno) << endl;
         }
     }
 
