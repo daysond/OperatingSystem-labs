@@ -171,17 +171,17 @@ void check(int ret, int &sock) {
     // *accept non-blocking code
     if (errno == EAGAIN || errno == EWOULDBLOCK) {
 #if defined(DEBUG)
-        cout << "[Accept]: Timeout occured." << endl;
+        cout << "[Accept] Timeout occured." << endl;
 #endif
         return;
     }
     // ------------------------
-    if (ret < 0) {
-        cout << "[ERROR] (" << __FILE__ << ": " << __LINE__
-             << ". Error: " << strerror(errno) << endl;
+    else if (ret < 0) {
+        cout << "[ERROR]" << strerror(errno) << endl;
         close(sock);
         exit(ret);
     }
+     cout << "Done checking." << endl;
 }
 
 void *recv_func(void *arg) {
@@ -219,7 +219,7 @@ static void signalHandler(int signum) {
 
     switch (signum) {
     case SIGINT:
-        cout << "[Interrupt] SIGINT received." << endl;
+        cout << "\n[Interrupt] SIGINT received." << endl;
         isRunning = false;
         break;
 
