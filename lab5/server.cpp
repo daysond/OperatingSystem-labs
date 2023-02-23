@@ -91,12 +91,10 @@ int main(int argc, char const *argv[]) {
 
             check(clients[connections], master_socket);
 
-#if defined(DEBUG)
-            cout << "[Accept] Client fd: " << clients[connections] << endl;
-#endif
-
             if (clients[connections] > 0) {
 #if defined(DEBUG)
+                cout << "[Accept] Connected. Client fd: "
+                     << clients[connections] << endl;
                 cout << "[Recv] Creating thread for client fd "
                      << clients[connections] << endl;
 #endif
