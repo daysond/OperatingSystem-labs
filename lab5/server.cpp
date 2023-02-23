@@ -71,10 +71,11 @@ int main(int argc, char const *argv[]) {
 
     //  Accepting connections
     while (isRunning) {
+
+        if (connections < 3) {
 #if defined(DEBUG)
         cout << "[Server] Waiting for connection... " << endl;
 #endif
-        if (connections < 3) {
             socklen_t cl_size = sizeof(cl_addrs[connections]);
             clients[connections] = accept(
                 master_socket, (sockaddr *)&cl_addrs[connections], &cl_size);
@@ -135,7 +136,7 @@ int main(int argc, char const *argv[]) {
     close(master_socket);
 
 #if defined(DEBUG)
-    cout << "[Server]: Process has shutdown sucessfully." << endl;
+    cout << "[Server] Process has shutdown sucessfully." << endl;
 #endif
 
     return 0;
