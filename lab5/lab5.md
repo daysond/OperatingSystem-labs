@@ -63,4 +63,11 @@ The communications stop when a **ctrl-C** is issued to the server. The signal ha
 
 ## Questions
 1.  What is the difference between synchronous and asynchronous communication?
+
+Synchronous communication waits for the result before executing the next line of code. It's blocking, can be inefficient if there's delay.
+
+Asynchronous does not wait for the result and will go ahead and execute the rest of the code. It's non-blocking.  In socket communication, this can be achieved using multiple threads, select() or poll(). In general, callbacks or event-driven programming can be used.
+
 2.  Do you prefer socket reads in a receive thread or do you prefer both socket read and write to be in the main() function? Why?
+
+It depends. If the program is rather simple, one server one client, just read and write, I prefer doing both read and write in the main function. This way, less system resouces will be used and the code will be simpler. If the program needs to allow connections of multiple clients, it's better to have seperate threads for read and write. This way, our program will be more responsive. However, this adds complexity to the code.
