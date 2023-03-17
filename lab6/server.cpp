@@ -14,7 +14,7 @@
 #include <sys/msg.h>
 #include <unistd.h>
 
-#define MTYPE = 4
+#define MTYPE 4
 
 using namespace std;
 //  Function Signatures
@@ -55,6 +55,7 @@ int main(int argc, char const *argv[]) {
     return 0;
 }
 
+//ANCHOR - Function Implementations
 void *recv_func(void *arg) {
     cout << "[Thread] Receive thread started." << endl;
     while (is_running) {
@@ -140,3 +141,31 @@ void startThreads(pthread_t *recv_tid, pthread_t *wr_tid) {
         exit(-1);
     }
 }
+
+
+/*
+
+Compare and contrast the mechanisms of inter-process communication that you have studied so far.
+
+1. Between sockets, pipes, fifos, and messages, which is your favourite and why?
+  For IPC on the same computer, I would use message queue.
+  Reasons:  1. Reliable and efficient communication
+            2. Suitable for large data structures
+ 
+  For IPC on different computers, I would use socket.
+  Reasons:  1. Different protocols are provided
+            2. Able to send large data structures as well with data serialization
+
+2. Which is your least favourite and why?
+  pipes/fifos
+  Reasons:  1. It does not provide bidirectional communication.
+            2. Insecure, the reader does not care who sends the data.
+            3. Pipe buffer size is fixed, so sending large data might be problematic.
+
+3. For the scenario presented in this lab, is there a need for a server? Why?
+  In this particular lab scenario, I don't think so. The intended receiver (dest) could have been specified in the mtype parameter so that the clients can   exchange messages via the message queue. But quitting the clients might be an issue since msgrcv() is blocking.
+  However, in real applications, having a server does provide some advantages, such as:
+    1. Centralized control. For instance: clients quitting at the same time.
+    2. Security: senders are verified by the server
+
+*/

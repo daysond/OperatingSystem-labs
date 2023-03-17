@@ -85,7 +85,7 @@ int main()
     }
     cout<<"client1: quitting..."<<endl;
     pthread_join(tid1, NULL);
-
+    
     return 0; 
 } 
 
