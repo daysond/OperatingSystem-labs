@@ -86,6 +86,7 @@ int main(void) {
     ShmPTR->destClientNo=1;
     memset(ShmPTR->message, 0, BUF_LEN);
     sprintf(ShmPTR->message, "This is message 0 from client %d\n", CLIENT_NO);
+    
     sem_post(sem_id);
     
     for(int i=0; i<NUM_MESSAGES && is_running; ++i) {

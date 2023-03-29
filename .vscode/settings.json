@@ -1,8 +1,11 @@
 {
   "files.associations": {
+    "MLTable": "yaml",
     "ostream": "cpp",
     "iostream": "cpp",
-    "string": "cpp"
+    "string": "cpp",
+    "queue": "cpp",
+    "new": "cpp"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }
