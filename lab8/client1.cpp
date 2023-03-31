@@ -127,17 +127,21 @@ int main()
     check(pthread_create(&send_tid, NULL, send_func, &src_fd));    
 
     // --------- Reading msg ---------
-    unsigned char dec_msg[BUF_LEN];
+    unsigned char *dec_msg = nullptr;
     while(is_running) {
+        pthread_mutex_lock(&lock_x);
         if (messageQueue.empty() == 0) {
-            pthread_mutex_lock(&lock_x);
-            memcpy(dec_msg, messageQueue.front(), BUF_LEN);
-            delete [] messageQueue.front();
+            dec_msg = messageQueue.front();
             messageQueue.front() = nullptr;
             messageQueue.pop();
+        }
+        pthread_mutex_unlock(&lock_x);
+
+        if(dec_msg) {
             if(strncmp((char *)dec_msg, "Quit", 4)==0) is_running=false;
             else cout << "Received: " << dec_msg << endl;
-            pthread_mutex_unlock(&lock_x);
+            delete [] dec_msg;
+            dec_msg = nullptr;
         }
         sleep(1);
     }
