@@ -35,8 +35,8 @@ pthread_t recv_tid, send_tid;
 void check(int);
 void *recv_func(void *arg);
 void *send_func(void *arg);
-void decryptMsg(double *enc_text);
-void encryptMsg(const unsigned char (&src)[BUF_LEN], double (&dest)[BUF_LEN]);
+void decryptMsg(unsigned int *enc_text);
+void encryptMsg(const unsigned char (&src)[BUF_LEN], unsigned int (&dest)[BUF_LEN]);
 
 static void shutdownHandler(int sig)
 {
@@ -48,13 +48,13 @@ static void shutdownHandler(int sig)
 }
 
 // Returns a^b mod c
-unsigned char PowerMod(int a, int b, int c)
+unsigned int PowerMod(int a, int b, int c)
 {
     int res = 1;
     for(int i=0; i<b; ++i) {
         res=fmod(res*a, c);
     }
-    return (unsigned char)res;
+    return (unsigned int)res;
 }
   
 // Returns gcd of a and b
@@ -159,12 +159,12 @@ void *recv_func(void *arg) {
 
     int src_fd = *(int *)arg;
     int msg_len = 0;
-    double enc_text[BUF_LEN];
+    unsigned int enc_text[BUF_LEN];
     unsigned char dec_text[BUF_LEN];
     memset(&enc_text, 0, BUF_LEN);
     memset(&dec_text, 0, BUF_LEN);
     while(is_running) {
-        msg_len = recvfrom(src_fd, enc_text, BUF_LEN * 8, 0, NULL, NULL);
+        msg_len = recvfrom(src_fd, enc_text, BUF_LEN * sizeof(unsigned int), 0, NULL, NULL);
         if(msg_len < 0) {
             sleep(1);
         } else {
@@ -175,7 +175,7 @@ void *recv_func(void *arg) {
     pthread_exit(NULL);
 }
 
-void decryptMsg(double *enc_text) {
+void decryptMsg(unsigned int *enc_text) {
     // This function takes a double array, decrypts the array into a string and pushes it to message queue
     unsigned char* dec_text = new unsigned char[BUF_LEN];
     memset(dec_text, 0, BUF_LEN);
@@ -207,7 +207,7 @@ void *send_func(void *arg) {
             "We got woken up every morning by having a load of rotting fish dumped all over us.",
             "Quit"};
 
-    double cipherText[numMessages][BUF_LEN];
+    unsigned int cipherText[numMessages][BUF_LEN];
 
     // Encrypting msg
     for(int i = 0; i < numMessages; i++) {
@@ -216,21 +216,21 @@ void *send_func(void *arg) {
     }
 
     for (int i = 0; i < numMessages; i++) {
-        sendto(src_fd, (const double*)cipherText[i] , BUF_LEN * 8, 0,(struct sockaddr *)&dest_addr, sizeof(dest_addr));
+        sendto(src_fd, (const unsigned int*)cipherText[i] , BUF_LEN * sizeof(unsigned int), 0,(struct sockaddr *)&dest_addr, sizeof(dest_addr));
         sleep(1);
     }
 
     pthread_exit(NULL);
 }
 
-void encryptMsg(const unsigned char (&src)[BUF_LEN], double (&dest)[BUF_LEN]) {
+void encryptMsg(const unsigned char (&src)[BUF_LEN], unsigned int (&dest)[BUF_LEN]) {
     // This function takes a string as src and a double array as dest, encrypt every char into double
     int m = 0;
     int i = 0;
         do {
             m = int(src[i]);
-            unsigned char res = PowerMod(m, e, n);  // c = m ^ e mod (n)
-            dest[i] = double(res);
+            unsigned int res = PowerMod(m, e, n);  // c = m ^ e mod (n)
+            dest[i] = res;
             i++;
         } while(m != 0);
 }
