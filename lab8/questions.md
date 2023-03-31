@@ -1,7 +1,7 @@
 1. What happens if your modulus n is too small, keeping in mind the range of the ASCII values for alpha-numeric characters?
 
     If n is too small, the message will be easy to decrpted using brute force attack.
-    For instance, if n is 51959, p and q can be calculated in a blink of an eye just by iterating the possible products of primes from 1 - 1000.
+    For instance, if n is 16 digits long, p and q can be calculated in a blink of an eye just by iterating the possible products of primes from a certain range.
     And given the fact that n and e are public, p, q, d can be cracked easily if n is too small.
 
 2. With quantum computers, will it be easy to crack the RSA algorithm? Why?
