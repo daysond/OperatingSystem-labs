@@ -7,6 +7,10 @@
 #include <math.h>
 #include <sched.h>
 #include <sys/resource.h>
+#include <errno.h>
+#include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 using namespace std;
 
@@ -21,24 +25,43 @@ int main()
     timespec startTime, endTime;
     double totalTime;
 
+    const char filename[] = "./time_data.txt";
     //TODO: Open a file
+    int fd = open(filename, O_WRONLY | O_CREAT , 0777);
+  
+    if (fd == -1) {
+        cout << "Error: " << strerror(errno) << endl;
+    }
 
 
     //TODO: Call DeterminePrimes() 20 times while varying the
     //      priority from -20 to +19
-    //TODO: For each call to DeterminePrimes() measure the time
-    //      taken to crack the modulus n of the RSA scheme.
-    //TODO: Use the high resolution timing function clock_gettime()
-    //      which gives time to the nanosecond.
-    //      Store the time before the call to DeterminePrimes() and
-    //      after the call to DeterminePrimes(). The difference is the
-    //      time it took to hack them modulus n of the RSA scheme.
-    //TODO: Store the hack time of each call in a file
-    //TODO: You will make a plot of hack-time vs nice value
+    int nice_value;
+    const int BUF_LEN = 256;
+    char buf[BUF_LEN];
+    for (int i=0; i<40; i++) {
+        nice_value = -20+i;
 
+        retVal = setpriority(PRIO_PROCESS, 0, nice_value);
+        nice_value = getpriority(PRIO_PROCESS, 0);//validate the set
+        cout<<"retVal:"<<retVal<<" niceValue:"<<nice_value<<endl;
+        
+        //timer start
+        clock_gettime(CLOCK_REALTIME, &startTime);
+        DeterminePrimes();
+        //timer stop
+        clock_gettime(CLOCK_REALTIME, &endTime);
+        totalTime = nanosecsPerSecond * (endTime.tv_sec - startTime.tv_sec) + endTime.tv_nsec - startTime.tv_nsec;
+        
+        cout<< nice_value <<": " << totalTime << endl;
+        memset(buf, 0, BUF_LEN);
+        ret =sprintf(buf, "%d:%lf", nice_value,totalTime)+1;
+        buf[ret-1] = '\n';
+        write(fd, buf, ret);
+    }
 
     //TODO: Be sure to close your file when done
-
+    close(fd);
     return ret;
 }
 
