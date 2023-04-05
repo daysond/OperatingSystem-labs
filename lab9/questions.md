@@ -34,3 +34,8 @@ So, hacking 1024 bits might take more than 20 years.
 ## 4. When you were at the middle nice value (nice=0), how much cpu time was your hack process taking?
 
     At nice  value of 0, it took 18 seconds.
+
+
+## Graph of nice value vs time cost to hack n
+
+![](./nice_value_vs_time.jpg)
