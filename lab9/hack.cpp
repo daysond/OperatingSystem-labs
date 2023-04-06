@@ -54,7 +54,7 @@ int main()
         totalTime = nanosecsPerSecond * (endTime.tv_sec - startTime.tv_sec) + endTime.tv_nsec - startTime.tv_nsec;
         
         cout<< nice_value <<": " << totalTime << endl;
-        memset(buf, 0, BUF_LEN);
+        memset(&buf, 0, BUF_LEN);
         ret =sprintf(buf, "%d:%lf", nice_value,totalTime)+1;
         buf[ret-1] = '\n';
         write(fd, buf, ret);

@@ -84,7 +84,7 @@ int main(void) {
     //TODO:Client 3 starts everything
     ShmPTR->srcClientNo=CLIENT_NO;
     ShmPTR->destClientNo=1;
-    memset(ShmPTR->message, 0, BUF_LEN);
+    memset(&ShmPTR->message, 0, BUF_LEN);
     sprintf(ShmPTR->message, "This is message 0 from client %d\n", CLIENT_NO);
     
     sem_post(sem_id);
@@ -98,7 +98,7 @@ int main(void) {
             //Send a message to client 1 or 2
             ShmPTR->srcClientNo=CLIENT_NO;
             ShmPTR->destClientNo=1+i%2;//send a message to client 1 or 2
-            memset(ShmPTR->message, 0, BUF_LEN);
+            memset(&ShmPTR->message, 0, BUF_LEN);
             sprintf(ShmPTR->message, "This is message %d from client %d\n", i+1, CLIENT_NO);
         }
         sem_post(sem_id);

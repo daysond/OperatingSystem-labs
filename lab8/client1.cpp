@@ -103,7 +103,7 @@ int main()
     cout<<"p:"<<p<<" q:"<<q<<" n:"<<n<<" phi:"<<phi<<" e:"<<e<<" d:"<<d<<endl;
 
     signal(SIGINT, shutdownHandler);
-
+    pthread_mutex_init(&lock_x, NULL);
     //TODO: Complete the rest
     // --------- socket set up ---------
     src_fd = socket(AF_INET, SOCK_DGRAM | SOCK_NONBLOCK, 0);
