@@ -12,7 +12,7 @@ $$7.3\cdot10^7$$
 
 1024 bits can represent number up to $$2^{1024}$$.
 
-Take the square root, we have roughly $$1.34\cdot10^{154}$$.
+Take the square root, the number is around $$1.34\cdot10^{154}$$.
 
 Do the division: $$\frac{1.34\cdot10^{154}}{7.3\cdot10^7} = {1.84 \cdot 10^{147}}$$
 
@@ -20,8 +20,7 @@ Which means hacking 1024 bits would take $${1.84 \cdot 10^{147}\cdot0.5} = 9.2\c
 
 1 year is $$3.154\cdot10^7\; second$$
 
-So, hacking 1024 bits might take more than 20 years.
-
+So, hacking 1024 bits takes more than 20 years in this case.
 
 ## 2. When you were at the lowest nice value, how much cpu time was your hack process taking?
 

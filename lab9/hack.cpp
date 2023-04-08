@@ -44,6 +44,12 @@ int main()
 
         retVal = setpriority(PRIO_PROCESS, 0, nice_value);
         nice_value = getpriority(PRIO_PROCESS, 0);//validate the set
+
+        if(retVal < 0) {
+            cout<< "[Error]" << strerror(errno) <<": did you forget \'sudo\' ? \n exiting..."<< endl;
+            exit(retVal);
+        }
+
         cout<<"retVal:"<<retVal<<" niceValue:"<<nice_value<<endl;
         
         //timer start
@@ -51,6 +57,7 @@ int main()
         DeterminePrimes();
         //timer stop
         clock_gettime(CLOCK_REALTIME, &endTime);
+        // total time in nano seconds
         totalTime = nanosecsPerSecond * (endTime.tv_sec - startTime.tv_sec) + endTime.tv_nsec - startTime.tv_nsec;
         
         cout<< nice_value <<": " << totalTime << endl;
